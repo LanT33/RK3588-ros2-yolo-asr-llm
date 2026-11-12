@@ -1,0 +1,33 @@
+/llm_node:
+  ros__parameters:
+    model_path: /home/audll/models/rkllm_weight/qwen3.5-0.8b_w8a8_rk3588.rkllm
+    max_tokens: 128
+    context_len: 512
+
+/asr_node:
+  ros__parameters:
+    # 仓库内自带的 sherpa-onnx 中文流式模型（encoder/decoder/joiner + tokens.txt）
+    asr_model_dir: /ws/src/rk3588_voice_assistant_ros2/src/rk3588_voice_assistant/third_party/sherpa-onnx/models/zh-small
+
+/audio_vad_node:
+  ros__parameters:
+    # 板载 ES8388 是 card 1（card 2 是 hdmi0，无法采集）
+    mic_device: "plughw:1,0"
+    sample_rate: 44100
+    channels: 2
+
+/yolo_node:
+  ros__parameters:
+    model_path: /home/audll/models/rkllm_weight/yolo11n.rknn
+    conf_threshold: 0.25
+    # auto: 按模型输出张量数自动判定（9 → YOLO11 split9，其它 → 旧 split2）
+    output_mode: auto
+    # 帧源：device=真实摄像头 / file=裸 UYVY 帧序列文件（无相机时用视频替代）
+    camera_source: file
+    camera_device: /dev/video11
+    camera_width: 768
+    camera_height: 432
+    video_file: /home/audll/models/videos/person_768x432_12fps_10s.yuv
+    video_fps: 12.0
+    video_loop: true
+    save_dir: /ws/yolo_out
